@@ -1,0 +1,1 @@
+Precision measures the fraction of retrieved documents that are relevant. Recall measures the fraction of relevant documents that are retrieved.

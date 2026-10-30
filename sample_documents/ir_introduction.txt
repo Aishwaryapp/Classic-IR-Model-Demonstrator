@@ -1,0 +1,1 @@
+Information retrieval systems search document collections and return documents relevant to a user's query. Indexing and ranking are important components.

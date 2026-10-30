@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Search Results · IR Lab{% endblock %}
+{% block content %}
+<a class="back" href="/">← Back to collection</a>
+<section class="hero compact"><div><p class="eyebrow">RETRIEVAL RESULTS</p><h1>Search results</h1><p class="sub">Query: <strong>{{ query }}</strong></p></div><div class="pill">{{ results|length }} matches</div></section>
+<section class="panel">
+  <div class="model-banner">
+    {% if model == "boolean" %}<b>Boolean Retrieval Model</b><span>Logical matching · exact results</span>
+    {% elif model == "fuzzy" %}<b>Fuzzy Set Model</b><span>Partial matching · Jaccard membership</span>
+    {% else %}<b>Vector Space Model</b><span>TF-IDF weighting · cosine similarity</span>{% endif %}
+  </div>
+  {% if error %}<div class="flash error">{{ error }}</div>
+  {% elif results %}
+    {% for item in results %}
+    <article class="result">
+      <div class="result-top"><div><p class="eyebrow">DOCUMENT #{{ item.doc.id }}</p><h3>{{ item.doc.title }}</h3></div><div class="score"><strong>{{ item.score_label }}</strong><small>{% if model == "boolean" %}match{% else %}relevance score{% endif %}</small></div></div>
+      <p>{{ item.doc.content[:420] }}{% if item.doc.content|length > 420 %}…{% endif %}</p>
+      {% if model != "boolean" %}<div class="bar"><span style="width:{{ (item.score * 100)|round(1) }}%"></span></div>{% endif %}
+    </article>
+    {% endfor %}
+  {% else %}<div class="empty"><h3>No matching documents</h3><p>Try different terms or another retrieval model.</p></div>{% endif %}
+</section>
+{% endblock %}

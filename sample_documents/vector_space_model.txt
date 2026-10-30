@@ -1,0 +1,1 @@
+The vector space model represents documents as term vectors. TF-IDF weighting and cosine similarity are used to rank search results.

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}IR Lab · Document Collection{% endblock %}
+{% block content %}
+<section class="hero">
+  <div><p class="eyebrow">INFORMATION RETRIEVAL LAB</p><h1>Find the right document.<br><em>Understand why it matched.</em></h1>
+  <p class="sub">Upload a document collection, search it, and compare three classic retrieval models.</p></div>
+  <div class="count"><strong>{{ count }}</strong><span>documents indexed</span></div>
+</section>
+<section class="panel">
+  <h2>Search your collection</h2>
+  <form action="{{ url_for('search') }}" method="post" class="search-form">
+    <input name="query" required placeholder="Try: information retrieval or information AND retrieval">
+    <select name="model" aria-label="Retrieval model">
+      <option value="vsm">Vector Space Model (TF-IDF)</option>
+      <option value="boolean">Boolean Model (AND / OR / NOT)</option>
+      <option value="fuzzy">Fuzzy Set Model</option>
+    </select>
+    <button>Search documents →</button>
+  </form>
+  <p class="hint">Boolean example: <code>information AND retrieval</code> · <code>fuzzy OR boolean</code> · <code>retrieval AND NOT database</code></p>
+</section>
+<div class="two">
+<section class="panel">
+  <h2>Add documents</h2><p class="muted">Upload TXT, PDF, or DOCX files (maximum 10 MB each). Uploaded text is extracted and stored in SQLite.</p>
+  <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" class="upload-form">
+    <input type="file" name="document" accept=".txt,.pdf,.docx" required><button class="secondary">Upload & index</button>
+  </form>
+</section>
+<section class="panel explain">
+  <h2>What is being demonstrated?</h2>
+  <div><b>01 · Boolean</b><span>Exact logical matching using AND, OR and NOT.</span></div>
+  <div><b>02 · Vector Space</b><span>TF-IDF term weights and cosine similarity ranking.</span></div>
+  <div><b>03 · Fuzzy Set</b><span>Partial matching with a 0–1 Jaccard membership score.</span></div>
+</section>
+</div>
+<section class="panel">
+  <div class="section-head"><div><p class="eyebrow">COLLECTION</p><h2>Available documents</h2></div><span class="pill">{{ count }} indexed</span></div>
+  {% if documents %}
+  <div class="doc-list">{% for doc in documents %}
+    <article class="doc">
+      <div class="file-icon">▤</div><div class="doc-main"><strong>{{ doc.title }}</strong><small>{% if doc.filename %}Uploaded: {{ doc.filename }}{% else %}Sample document{% endif %} · {{ doc.created_at }}</small><p>{{ doc.content[:190] }}{% if doc.content|length > 190 %}…{% endif %}</p></div>
+      <form method="post" action="{{ url_for('delete_document', doc_id=doc.id) }}" onsubmit="return confirm('Delete this document?')"><button class="delete">Delete</button></form>
+    </article>
+  {% endfor %}</div>
+  {% else %}<p class="muted">No documents yet. Upload one to begin.</p>{% endif %}
+</section>
+{% endblock %}
